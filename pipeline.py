@@ -23,8 +23,8 @@ if __name__ == '__main__':
     parser.add_argument('target', help='target csv')
     args = parser.parse_args()
 
-    print("Stating..")
+    print("Starting...")
     data = extract_data(args.source)
     new_data = transform_data(data)
     load_data(new_data, args.target)
-    print('Complete')
+    print('Complete.')
