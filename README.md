@@ -1,8 +1,17 @@
-1.) On Windows: install WSL (any distributionm e.g. Ubuntu).
-2.) Install Docker
-3.) Install git
-4.) Create a Github repo for homeworks
-5.) Create a branch for this homework
-6.) Commit a README file to the branch
-7.) Open a pull request
-8.) Submit a link to the pull request
+1. Create a Python script that:
+
+    -accepts 2 command line arguments, 
+    -reads a csv from the first argument
+    -does something to the data
+    -saves the results to the csv defined by the second argument
+
+2. Create a Dockerfile that:
+
+    -pulls from Python Docker image
+    -copies the script above into the container
+    -runs the script above when the container starts
+    -NOTE: you can use files created during the demo.
+
+3. Check both into a repo on Github and open a pull request
+
+4. Submit the link to the pull request on Canvas
