@@ -26,7 +26,9 @@ def split_columns(data):
 
 def clean_columns(data):
     data_copy = data.copy()
-    data_copy['Name'] = data['Name'].apply(lambda x: re.sub(r'\*', '', str(x)))
+    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'\*', '', str(x)))
+    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'A\d{6}', 'Unknown', str(x)))
+    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'\d+ Grams', 'Unknown', str(x)))
     data_copy['Name'] = data_copy['Name'].replace('nan', 'Unknown')
     data_copy['Sex'] = data_copy['Sex'].replace(np.nan, 'Unknown')
     data_copy['Outcome Subtype'] = data_copy['Outcome Subtype'].replace(np.nan, 'None')
