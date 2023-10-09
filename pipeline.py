@@ -7,10 +7,16 @@ import re
 def extract_data(source):
     return pd.read_csv(source)
 
+def sort_columns(data):
+    data_copy = data.copy()
+    format = "%m/%d/%Y %H:%M:%S %p"
+    data_copy['DateTime'] = pd.to_datetime(data_copy['DateTime'], format=format)
+    data_copy = data_copy.sort_values(by=['DateTime'], ascending=False).reset_index(drop=True)
+    return data_copy
+
 def split_columns(data):
     data_copy = data.copy()
     data_copy[['Neutered', 'Sex']] = data_copy['Sex upon Outcome'].str.split(expand=True)
-    data_copy['DateTime'] = pd.to_datetime(data_copy['DateTime'])
     data_copy['Year'] = data_copy['DateTime'].dt.year
     data_copy['Month'] = data_copy['DateTime'].dt.month
     data_copy['Day'] = data_copy['DateTime'].dt.day
@@ -20,7 +26,7 @@ def split_columns(data):
 
 def clean_columns(data):
     data_copy = data.copy()
-    data_copy['Name'] = data['Name'].apply(lambda x: re.sub('\*', '', str(x)))
+    data_copy['Name'] = data['Name'].apply(lambda x: re.sub(r'\*', '', str(x)))
     data_copy['Name'] = data_copy['Name'].replace('nan', 'Unknown')
     data_copy['Sex'] = data_copy['Sex'].replace(np.nan, 'Unknown')
     data_copy['Outcome Subtype'] = data_copy['Outcome Subtype'].replace(np.nan, 'None')
@@ -43,6 +49,7 @@ def rename_columns(data):
 
 def transform_data(data):
     data_copy = data.copy()
+    data_copy = sort_columns(data_copy)
     data_copy = split_columns(data_copy)
     data_copy = clean_columns(data_copy)
     data_copy = drop_columns(data_copy)
