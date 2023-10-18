@@ -6,7 +6,7 @@ CREATE TABLE outcome_fact (
     outcome_date_id INT
 );
 
-CREATE TABLE animal_dim (
+CREATE TABLE outcome_animal_dim (
     animal_id INT PRIMARY KEY,
     animal_natural_key VARCHAR,
     animal_name VARCHAR,

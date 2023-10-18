@@ -1,4 +1,5 @@
 -- Question 1
+
 select distinct count(outcome_fact.animal_natural_key), outcome_animal_dim.animal_type
 from outcome_fact
 inner join outcome_animal_dim
@@ -6,6 +7,7 @@ on outcome_fact.animal_id = outcome_animal_dim.animal_id
 group by outcome_animal_dim.animal_type;
 
 -- Question 2
+
 select count(animal_natural_key) 
 from (
 	select animal_natural_key
@@ -15,6 +17,7 @@ from (
 );
 
 -- Question 3
+
 select outcome_date_month, count(outcome_date_month)
 from outcome_date_dim
 right join outcome_fact
