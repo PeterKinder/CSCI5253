@@ -37,16 +37,16 @@ def clean_columns(data):
     return data_copy
 
 def drop_columns(data):
-    columns = ['MonthYear', 'Age upon Outcome', 'Sex upon Outcome', 'DateTime']
+    columns = ['MonthYear', 'Age upon Outcome', 'Sex upon Outcome']
     data_copy = data.drop(columns, axis=1, inplace=False)
     return data_copy
 
 def rename_columns(data):
     data_copy = data.copy()
-    data_copy.columns = ['animal_natural_key', 'animal_name', 'animal_dob', 'outcome_type', 'outcome_type_subtype',
-                         'animal_type', 'animal_breed', 'animal_color', 'outcome_type_neutered',
-                         'animal_sex', 'outcome_date_year', 'outcome_date_month', 'outcome_date_day',
-                         'outcome_date_hour', 'outcome_date_minute']
+    data_copy.columns = ['animal_natural_key', 'animal_name', 'outcome_date', 'animal_dob', 'outcome_type', 
+                         'outcome_type_subtype', 'animal_type', 'animal_breed', 'animal_color', 
+                         'outcome_type_neutered', 'animal_sex', 'outcome_date_year', 'outcome_date_month', 
+                         'outcome_date_day', 'outcome_date_hour', 'outcome_date_minute']
     return data_copy
 
 def transform_data(data):
@@ -77,8 +77,8 @@ def load_animal_dim(data, conn):
 
 
 def load_outcome_date_dim(data, conn):
-    data_copy = data[['outcome_date_year', 'outcome_date_month', 'outcome_date_day', 
-                      'outcome_date_hour', 'outcome_date_minute']].copy()
+    data_copy = data[['outcome_date', 'outcome_date_year', 'outcome_date_month', 
+                      'outcome_date_day', 'outcome_date_hour', 'outcome_date_minute']].copy()
     data_copy = data_copy.drop_duplicates()
     data_copy = data_copy.reset_index(drop=True).reset_index()
     data_copy = data_copy.rename(columns={'index': 'outcome_date_id'})

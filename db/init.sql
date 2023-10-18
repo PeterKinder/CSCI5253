@@ -1,9 +1,9 @@
 CREATE TABLE outcome_fact (
     id INT PRIMARY KEY,
+    animal_natural_key VARCHAR,
     animal_id INT,
     outcome_type_id INT,
-    outcome_date_id INT,
-    animal_natural_key VARCHAR
+    outcome_date_id INT
 );
 
 CREATE TABLE animal_dim (
@@ -26,6 +26,7 @@ CREATE TABLE outcome_type_dim (
 
 CREATE TABLE outcome_date_dim (
     outcome_date_id INT PRIMARY KEY,
+    outcome_date TIMESTAMP,
     outcome_date_year INT,
     outcome_date_month INT,
     outcome_date_day INT,
