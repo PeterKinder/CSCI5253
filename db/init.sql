@@ -1,13 +1,5 @@
-CREATE TABLE outcome_fact (
-    id INT PRIMARY KEY,
-    animal_natural_key VARCHAR,
-    animal_id INT,
-    outcome_type_id INT,
-    outcome_date_id INT
-);
-
-CREATE TABLE outcome_animal_dim (
-    animal_id INT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS outcome_animal_dim (
+    animal_id VARCHAR PRIMARY KEY,
     animal_natural_key VARCHAR,
     animal_name VARCHAR,
     animal_type VARCHAR,
@@ -17,19 +9,25 @@ CREATE TABLE outcome_animal_dim (
     animal_dob DATE
 );
 
-CREATE TABLE outcome_type_dim (
-    outcome_type_id INT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS outcome_type_dim (
+    outcome_type_id VARCHAR PRIMARY KEY,
     outcome_type VARCHAR,
     outcome_type_subtype VARCHAR,
     outcome_type_neutered VARCHAR
 );
 
-CREATE TABLE outcome_date_dim (
-    outcome_date_id INT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS outcome_date_dim (
+    outcome_date_id VARCHAR PRIMARY KEY,
     outcome_date TIMESTAMP,
     outcome_date_year INT,
     outcome_date_month INT,
-    outcome_date_day INT,
-    outcome_date_hour INT,
-    outcome_date_minute INT
+    outcome_date_day INT
+);
+
+CREATE TABLE IF NOT EXISTS outcome_fact (
+    id SERIAL PRIMARY KEY,
+    FOREIGN KEY (animal_natural_key) REFERENCES outcome_animal_dim(animal_natural_key) ,
+    FOREIGN KEY (animal_id) REFERENCES outcome_animal_dim(animal_id),
+    FOREIGN KEY (outcome_type_id) REFERENCES outcome_type_dim(outcome_type_id),
+    FOREIGN KEY (outcome_date_id) REFERENCES outcome_date_dim(outcome_date_id)
 );

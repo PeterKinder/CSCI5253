@@ -4,8 +4,10 @@ import numpy as np
 import argparse
 import re
 
+"""
 def extract_data(source):
     return pd.read_csv(source)
+"""
 
 def sort_columns(data):
     data_copy = data.copy()
@@ -49,8 +51,8 @@ def rename_columns(data):
                          'outcome_date_day', 'outcome_date_hour', 'outcome_date_minute']
     return data_copy
 
-def transform_data(data):
-    data_copy = data.copy()
+def transform_data(source_csv):
+    data_copy = pd.read_csv(source_csv)
     data_copy = sort_columns(data_copy)
     data_copy = split_columns(data_copy)
     data_copy = clean_columns(data_copy)
