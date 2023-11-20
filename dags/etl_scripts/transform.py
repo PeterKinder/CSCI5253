@@ -43,7 +43,6 @@ def drop_columns(data):
 
 def rename_columns(data):
     data_copy = data.copy()
-    print(data_copy.columns)
     data_copy.rename(columns={'animal_id': 'animal_natural_key', 'name': 'animal_name', 'datetime': 'outcome_date',
                               'date_of_birth': 'animal_dob', 'breed': 'animal_breed', 'color': 'animal_color',
                               'neutered': 'outcome_type_neutered', 'sex': 'animal_sex', 'year': 'outcome_date_year',
@@ -70,10 +69,6 @@ def transform_animal_dim(data):
 
 def transform_date_dim(data):
     data_copy = data[['outcome_date', 'outcome_date_year', 'outcome_date_month', 'outcome_date_day']].copy()
-    print(data_copy.dtypes)
-    print(data_copy.head(5))
-    format = '%Y-%m-%dT%H:%M:%S.%f'
-    data_copy['outcome_date'] = pd.to_datetime(data_copy['outcome_date'], format=format)
     data_copy['outcome_date'] = data_copy['outcome_date'].dt.date
     surrogate_keys = [hashlib.md5(row.astype(str).str.cat(sep='').encode('utf-8')).hexdigest() for _, row in data_copy.iterrows()]
     data_copy['outcome_date_id'] = surrogate_keys
