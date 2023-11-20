@@ -6,47 +6,48 @@ import re
 
 def sort_columns(data):
     data_copy = data.copy()
-    format = "%m/%d/%Y %H:%M:%S %p"
-    data_copy['DateTime'] = pd.to_datetime(data_copy['DateTime'], format=format)
-    data_copy = data_copy.sort_values(by=['DateTime'], ascending=False).reset_index(drop=True)
+    format = '%Y-%m-%dT%H:%M:%S.%f'
+    data_copy['datetime'] = pd.to_datetime(data_copy['datetime'], format=format)
+    data_copy = data_copy.sort_values(by=['datetime'], ascending=True).reset_index(drop=True)
     return data_copy
 
 def split_columns(data):
     data_copy = data.copy()
-    data_copy[['Neutered', 'Sex']] = data_copy['Sex upon Outcome'].str.split(expand=True)
-    data_copy['Year'] = data_copy['DateTime'].dt.year
-    data_copy['Month'] = data_copy['DateTime'].dt.month
-    data_copy['Day'] = data_copy['DateTime'].dt.day
+    data_copy[['neutered', 'sex']] = data_copy['sex_upon_outcome'].str.split(expand=True)
+    data_copy['year'] = data_copy['datetime'].dt.year
+    data_copy['month'] = data_copy['datetime'].dt.month
+    data_copy['day'] = data_copy['datetime'].dt.day
     return data_copy
 
 def clean_columns(data):
     data_copy = data.copy()
     data_copy = data_copy.apply(lambda col: col.str.lower() if col.dtype == "object" else col)
-    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'\*', '', str(x)))
-    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'a\d{6}', 'unknown', str(x)))
-    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'\d+ grams', 'unknown', str(x)))
-    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'\d+g', '', str(x)))
-    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'\s+', ' ', str(x)))
-    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r"^ +| +$", "", str(x)))
-    data_copy['Name'] = data_copy['Name'].apply(lambda x: re.sub(r'^\s*$', "unknown", str(x)))
-    data_copy['Name'] = data_copy['Name'].replace('nan', 'unknown')
-    data_copy['Sex'] = data_copy['Sex'].replace(np.nan, 'unknown')
-    data_copy['Outcome Subtype'] = data_copy['Outcome Subtype'].replace(np.nan, 'none')
-    data_copy['Neutered'] = data_copy['Neutered'].replace('intact', 'no')
-    data_copy['Neutered'] = data_copy['Neutered'].replace(['neutered', 'spayed'], 'yes')
+    data_copy['name'] = data_copy['name'].apply(lambda x: re.sub(r'\*', '', str(x)))
+    data_copy['name'] = data_copy['name'].apply(lambda x: re.sub(r'a\d{6}', 'unknown', str(x)))
+    data_copy['name'] = data_copy['name'].apply(lambda x: re.sub(r'\d+ grams', 'unknown', str(x)))
+    data_copy['name'] = data_copy['name'].apply(lambda x: re.sub(r'\d+g', '', str(x)))
+    data_copy['name'] = data_copy['name'].apply(lambda x: re.sub(r'\s+', ' ', str(x)))
+    data_copy['name'] = data_copy['name'].apply(lambda x: re.sub(r"^ +| +$", "", str(x)))
+    data_copy['name'] = data_copy['name'].apply(lambda x: re.sub(r'^\s*$', "unknown", str(x)))
+    data_copy['name'] = data_copy['name'].replace('nan', 'unknown')
+    data_copy['sex'] = data_copy['sex'].replace(np.nan, 'unknown')
+    data_copy['outcome_subtype'] = data_copy['outcome_subtype'].replace(np.nan, 'none')
+    data_copy['neutered'] = data_copy['neutered'].replace('intact', 'no')
+    data_copy['neutered'] = data_copy['neutered'].replace(['neutered', 'spayed'], 'yes')
     return data_copy
 
 def drop_columns(data):
-    columns = ['MonthYear', 'Age upon Outcome', 'Sex upon Outcome']
+    columns = ['monthyear', 'age_upon_outcome', 'sex_upon_outcome']
     data_copy = data.drop(columns, axis=1, inplace=False)
     return data_copy
 
 def rename_columns(data):
     data_copy = data.copy()
-    data_copy.columns = ['animal_natural_key', 'animal_name', 'outcome_date', 'animal_dob', 'outcome_type', 
-                         'outcome_type_subtype', 'animal_type', 'animal_breed', 'animal_color', 
-                         'outcome_type_neutered', 'animal_sex', 'outcome_date_year', 'outcome_date_month', 
-                         'outcome_date_day']
+    print(data_copy.columns)
+    data_copy.rename(columns={'animal_id': 'animal_natural_key', 'name': 'animal_name', 'datetime': 'outcome_date',
+                              'date_of_birth': 'animal_dob', 'breed': 'animal_breed', 'color': 'animal_color',
+                              'neutered': 'outcome_type_neutered', 'sex': 'animal_sex', 'year': 'outcome_date_year',
+                              'month': 'outcome_date_month', 'day': 'outcome_date_day', 'outcome_subtype': 'outcome_type_subtype'}, inplace=True)
     return data_copy
 
 def prep_data(source_csv):
@@ -69,6 +70,10 @@ def transform_animal_dim(data):
 
 def transform_date_dim(data):
     data_copy = data[['outcome_date', 'outcome_date_year', 'outcome_date_month', 'outcome_date_day']].copy()
+    print(data_copy.dtypes)
+    print(data_copy.head(5))
+    format = '%Y-%m-%dT%H:%M:%S.%f'
+    data_copy['outcome_date'] = pd.to_datetime(data_copy['outcome_date'], format=format)
     data_copy['outcome_date'] = data_copy['outcome_date'].dt.date
     surrogate_keys = [hashlib.md5(row.astype(str).str.cat(sep='').encode('utf-8')).hexdigest() for _, row in data_copy.iterrows()]
     data_copy['outcome_date_id'] = surrogate_keys
