@@ -79,7 +79,7 @@ def transform_date_dim(data):
 def transform_type_dim(data):
     data_copy = data[['outcome_type', 'outcome_type_subtype', 'outcome_type_neutered']].copy()
     surrogate_keys = [hashlib.md5(row.astype(str).str.cat(sep='').encode('utf-8')).hexdigest() for _, row in data_copy.iterrows()]
-    data_copy['outcome_date_id'] = surrogate_keys
+    data_copy['outcome_type_id'] = surrogate_keys
     data_copy.drop_duplicates(inplace=True)
     data_copy.reset_index(drop=True, inplace=True)
     return surrogate_keys, data_copy

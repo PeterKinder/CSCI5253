@@ -24,9 +24,12 @@ CREATE TABLE IF NOT EXISTS outcome_date_dim (
     outcome_date_day INT
 );
 
-CREATE TABLE IF NOT EXISTS outcome_fact (
+CREATE TABLE IF NOT EXISTS outcome_fact_table (
     id SERIAL PRIMARY KEY,
-    FOREIGN KEY (animal_natural_key) REFERENCES outcome_animal_dim(animal_natural_key) ,
+    animal_natural_key VARCHAR,
+    animal_id VARCHAR,
+    outcome_type_id VARCHAR,
+    outcome_date_id VARCHAR,
     FOREIGN KEY (animal_id) REFERENCES outcome_animal_dim(animal_id),
     FOREIGN KEY (outcome_type_id) REFERENCES outcome_type_dim(outcome_type_id),
     FOREIGN KEY (outcome_date_id) REFERENCES outcome_date_dim(outcome_date_id)

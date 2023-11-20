@@ -13,3 +13,9 @@ def load_data(table_file, table_name, key):
         return result.rowcount 
     pd.read_parquet(table_file).to_sql(table_name, conn, if_exists='append', index=False, method=insert_on_conflict_nothing)
     print(f"Loaded {table_file} to {table_name} table")
+    
+def load_fact_table(table_file, table_name):
+    db_url = os.environ['DB_URL']
+    conn = create_engine(db_url) 
+    pd.read_parquet(table_file).to_sql(table_name, conn, if_exists='append', index=False)
+    print(f"Loaded {table_file} to {table_name} table")

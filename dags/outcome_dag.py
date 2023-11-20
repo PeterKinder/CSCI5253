@@ -3,6 +3,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from etl_scripts.transform import transform_data
 from etl_scripts.load import load_data
+from etl_scripts.load import load_fact_table
 from datetime import datetime
 import os
 SOURCE_URL= 'https://data.austintexas.gov/api/views/9t4d-g238/rows.csv?date=20231118&accessType=DOWNLOAD'
@@ -36,4 +37,30 @@ with DAG(
             'key': 'animal_id'
         }
     )
-    extract >> transform >> load_outcome_animal_dim
+    load_outcome_date_dim = PythonOperator(
+        task_id="load_outcome_date_dim",
+        python_callable=load_data,
+        op_kwargs={
+            'table_file': PQ_TARGET_DIR + '/outcome_date_dim.parquet',
+            'table_name': 'outcome_date_dim',
+            'key': 'outcome_date_id'
+        }
+    )
+    load_outcome_type_dim = PythonOperator(
+        task_id="load_outcome_type_dim",
+        python_callable=load_data,
+        op_kwargs={
+            'table_file': PQ_TARGET_DIR + '/outcome_type_dim.parquet',
+            'table_name': 'outcome_type_dim',
+            'key': 'outcome_type_id'
+        }
+    )
+    load_outcome_fact_table = PythonOperator(
+        task_id="load_outcome_fact_table",
+        python_callable=load_fact_table,
+        op_kwargs={
+            'table_file': PQ_TARGET_DIR + '/outcome_fact_table.parquet',
+            'table_name': 'outcome_fact_table'
+        }
+    )
+    extract >> transform >> [load_outcome_animal_dim, load_outcome_date_dim, load_outcome_type_dim] >> load_outcome_fact_table
