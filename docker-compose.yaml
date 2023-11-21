@@ -71,10 +71,12 @@ x-airflow-common:
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     # WARNING: Use _PIP_ADDITIONAL_REQUIREMENTS option ONLY for a quick checks
     # for other purpose (development, test and especially production usage) build/extend Airflow image.
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- sodapy}
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- sodapy boto3}
 
-    DB_URL: 'postgresql+psycopg2://peter:password@db:5432/shelter'
+    DB_URL: 'postgresql://peter:password@csci5253-peter.cz6ou8wqkumk.us-west-2.rds.amazonaws.com:5432/postgres'
     APP_TOKEN: 'PKsmnIpUcg9vRfMFeZoUZunC4'
+    AWS_ACCESS_KEY_ID: 'AKIAS3KKR7KLBOURUM5W'
+    AWS_SECRET_ACCESS_KEY: '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'
 
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
@@ -300,24 +302,5 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  db:
-    image: "postgres:latest"
-    environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=peter
-      - POSTGRES_DB=shelter
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 10s
-      retries: 5
-      start_period: 5s
-    restart: always
-
 volumes:
   postgres-db-volume:
-  db_data:

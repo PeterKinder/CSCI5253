@@ -1,8 +1,14 @@
-from pathlib import Path
 import pandas as pd
 import numpy as np
 import hashlib
+import boto3
 import re
+import os
+import io
+
+aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
+aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
+s3 = boto3.resource('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
 def sort_columns(data):
     data_copy = data.copy()
@@ -49,8 +55,16 @@ def rename_columns(data):
                               'month': 'outcome_date_month', 'day': 'outcome_date_day', 'outcome_subtype': 'outcome_type_subtype'}, inplace=True)
     return data_copy
 
+def get_data(source_csv):
+    buffer = io.BytesIO()
+    obj = s3.Object('csci5253-peter', source_csv)
+    obj.download_fileobj(buffer)
+    data = pd.read_parquet(buffer)
+    return data
+
 def prep_data(source_csv):
-    data_copy = pd.read_csv(source_csv)
+    data = get_data(source_csv)
+    data_copy = data.copy()
     data_copy = sort_columns(data_copy)
     data_copy = split_columns(data_copy)
     data_copy = clean_columns(data_copy)
@@ -97,9 +111,8 @@ def transform_data(source_csv, target_dir):
     date_keys, date_dim = transform_date_dim(data)
     type_keys, type_dim = transform_type_dim(data)
     fact_table = transform_fact_table(data, animal_keys, date_keys, type_keys)
-    Path(target_dir).mkdir(parents=True, exist_ok=True)
-    animal_dim.to_parquet(target_dir + '/outcome_animal_dim.parquet', index=False)
-    date_dim.to_parquet(target_dir + '/outcome_date_dim.parquet', index=False)
-    type_dim.to_parquet(target_dir + '/outcome_type_dim.parquet', index=False)
-    fact_table.to_parquet(target_dir + '/outcome_fact_table.parquet', index=False)
+    s3.Bucket('csci5253-peter').put_object(Key=target_dir + '/outcome_animal_dim.parquet', Body=animal_dim.to_parquet(index=False))
+    s3.Bucket('csci5253-peter').put_object(Key=target_dir + '/outcome_date_dim.parquet', Body=date_dim.to_parquet(index=False))
+    s3.Bucket('csci5253-peter').put_object(Key=target_dir + '/outcome_type_dim.parquet', Body=type_dim.to_parquet(index=False))
+    s3.Bucket('csci5253-peter').put_object(Key=target_dir + '/outcome_fact_table.parquet', Body=fact_table.to_parquet(index=False))
     
