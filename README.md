@@ -2,11 +2,11 @@ In this lab, you will expand on you work from Lab 01.
 
 Assignment
 
-    * Use dimensional modeling to model the data in data warehouse in a PostgreSQL database
-    * Provide an Entity-Relationship diagram for how this data would have been represented if it used Third Normal Form. You do NOT need to implement 3NF -- just provide a diagram image.
-    * Modify the ETL pipeline from Lab 01 to load the data into the PostgreSQL database which will serve as a data warehouse
-    * Use Docker Compose to containerize the ETL pipeline and the database
-    * Once the data is in the warehouse, use SQL to run analysis on it (see Criteria below for exact queries)
+* Use dimensional modeling to model the data in data warehouse in a PostgreSQL database
+* Provide an Entity-Relationship diagram for how this data would have been represented if it used Third Normal Form. You do NOT need to implement 3NF -- just provide a diagram image.
+* Modify the ETL pipeline from Lab 01 to load the data into the PostgreSQL database which will serve as a data warehouse
+* Use Docker Compose to containerize the ETL pipeline and the database
+* Once the data is in the warehouse, use SQL to run analysis on it (see Criteria below for exact queries)
 
 Data
 
@@ -20,9 +20,9 @@ The following are acceptance criteria. You can use any method to accomplish them
 
 Data modeling:
 
-    * Data in the Postgres database serving as a data warehouse should modeled according to Kimball's dimensional modeling
-        * there should be a fact table
-        * there should be at least 3 dimension tables
+* Data in the Postgres database serving as a data warehouse should modeled according to Kimball's dimensional modeling
+    * there should be a fact table
+    * there should be at least 3 dimension tables
 
     Notes: 
 
