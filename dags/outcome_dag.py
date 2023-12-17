@@ -34,8 +34,8 @@ PYSPARK_JOB = {
 }
 with DAG(
     dag_id="outcomes_dag",
-    start_date = datetime(2023, 12, 16),
-    end_date = datetime(2023, 12, 16),
+    start_date = datetime(2023, 11, 1),
+    end_date = datetime(2023, 11, 10),
     schedule_interval = "@daily",
     max_active_runs = 1
 ) as dag:
